@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>  &middot; LiUhack - CTF team at LiU </title>
+
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="generator" content="Hugo 0.51" />
+
+
+<script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="https://liuhack.github.io/css/nix.css">
+
+
+<link href="https://fonts.googleapis.com/css?family=Inconsolata%7COpen+Sans%7CConcert+One" rel="stylesheet">
+
+
+
+
+    </head>
+
+    <body>
+	
+        <header>
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse font-header">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" id="green-terminal" href=https://liuhack.github.io>LiUhack@LiUhack.se ~ $</a>
+		</div>
+
+		
+		<div class="collapse navbar-collapse" id="navbar-collapse-1">
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<a href="https://liuhack.github.io">/home/LiUhack</a>
+				</li>
+				
+				
+				<li class="dropdown">
+                    
+            		<a href="https://liuhack.github.io/writeups">~/writeups</a>
+            		
+        		</li>
+        		
+
+			</ul>
+		</div>
+	</div>
+</nav>
+</header>
+
+        <div class="container wrapper">
+            <h1><a href="https://liuhack.github.io/writeups/2018/securityfest/mr.reagan/readme/"></a></h1>
+            <span class="post-date">Jan 1, 0001 </span>
+            <div class="post-content">
+                
+
+<h1 id="mr-reagan-misc">Mr.reagan - Misc</h1>
+
+<blockquote>
+<p>Agent Smith got this from Mr. Reagan, a EMP was activated nearby, or?</p>
+</blockquote>
+
+<p>Firstly, the file we got looked like this:</p>
+
+<pre><code>mrreagan: DOS/MBR boot sector, code offset 0x52+2, OEM-ID &quot;NTFS    &quot;, sectors/cluster 8, Media descriptor 0xf8, sectors/track 63, heads 255, hidden sectors 128, dos &lt; 4.0 BootSector (0x80), FAT (1Y bit by descriptor); NTFS, sectors/track 63, sectors 96255, $MFT start cluster 4010, $MFTMirror start cluster 2, bytes/RecordSegment 2^(-1*246), clusters/index block 1, serial number 0a2061d9b061d7211
+</code></pre>
+
+<p>Here we see that we got a NTFS filesystem, and we can try to recover deleted files and see if something is there. This can be done with the tool ntfsundelete:</p>
+
+<pre><code class="language-ntfundelete">Then we get the following back after running that command:
+</code></pre>
+
+<p>38       FN..   100%  2018-05-30 07:55      4096  fil867B.tmp</p>
+
+<p>Undeleted &lsquo;fil867B.tmp&rsquo; successfully.</p>
+
+<p>39       FR..   100%  2018-05-30 07:55         0  2.E
+Undeleted &lsquo;2.E&rsquo; successfully.</p>
+
+<p>40       FR..   100%  2018-05-30 07:55         0  1.E
+Undeleted &lsquo;1.E&rsquo; successfully.</p>
+
+<p>41       FR..   100%  2018-05-30 07:55         0  3.E
+Undeleted &lsquo;3.E&rsquo; successfully.</p>
+
+<p>42       FR..   100%  2018-05-30 07:51        13  $Info
+Undeleted &lsquo;$Info&rsquo; successfully.</p>
+
+<p>43       FR..   100%  2018-05-30 07:51        13  $Secure
+Undeleted &lsquo;$Secure&rsquo; successfully.</p>
+
+<p>44       FR..   100%  2018-05-30 07:51        13  $Boot
+Undeleted &lsquo;$Boot&rsquo; successfully.</p>
+
+<p>45       FR..   100%  2018-05-30 07:51        13  $Extend
+Undeleted &lsquo;$Extend&rsquo; successfully.</p>
+
+<p>46       FR..   100%  2018-05-30 07:51        13  $LogFile
+Undeleted &lsquo;$LogFile&rsquo; successfully.</p>
+
+<p>47       FR..   100%  2018-05-30 07:51        43  Morpheus.txt
+Undeleted &lsquo;Morpheus.txt&rsquo; successfully.</p>
+
+<p>48       FR..   100%  2018-05-30 07:51        11  Tank.txt
+Undeleted &lsquo;Tank.txt&rsquo; successfully.</p>
+
+<p>49       FR..   100%  2018-05-30 07:51        11  Dozer.txt
+Undeleted &lsquo;Dozer.txt&rsquo; successfully.</p>
+
+<p>50       FR..   100%  2018-05-30 07:51        69  Trinity.txt
+Undeleted &lsquo;Trinity.txt&rsquo; successfully.</p>
+
+<p>51       FR..   100%  2018-05-30 07:52        22  Neo.txt
+Undeleted &lsquo;Neo.txt&rsquo; successfully.</p>
+
+<p>Files with potentially recoverable content: 14</p>
+
+<pre><code>
+The deleted files above contain the following information:
+</code></pre>
+
+<p>Neo.txt - What is the Matrix.
+Trinity.txt - I was looking for an answer. It&rsquo;s the question that drives us mad.
+Dozer.txt - 73656366
+Tank.txt -  73656366
+Morpheus.txt - This line is tapped, so I must be brief.
+$Logfile - X2Y0azN9Cg
+$Extend - VsNTNfdzRz
+$Boot - bjN0MWNfcH
+$Secure - NjdHIwbTRn
+$Info - c2N0ZnszbD</p>
+
+<pre><code>
+Then we try to decode the content there which looks like base64 and we get the flag with:
+</code></pre>
+
+<p>echo &ldquo;c2N0ZnszbDNjdHIwbTRnbjN0MWNfcHVsNTNfdzRzX2Y0azN9Cg&rdquo; | base64 -d
+```</p>
+
+            </div>
+            
+            <div class="post-comments">
+                
+            </div>
+            
+            <div class="push"></div>
+        </div>
+        <footer class="footer text-center">
+<p>Copyright &copy; 2019 LiUhack
+</p>
+</footer>
+
+    </body>

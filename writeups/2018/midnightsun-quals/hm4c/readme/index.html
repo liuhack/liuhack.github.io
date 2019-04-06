@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>  &middot; LiUhack - CTF team at LiU </title>
+
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="generator" content="Hugo 0.51" />
+
+
+<script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="https://liuhack.github.io/css/nix.css">
+
+
+<link href="https://fonts.googleapis.com/css?family=Inconsolata%7COpen+Sans%7CConcert+One" rel="stylesheet">
+
+
+
+
+    </head>
+
+    <body>
+	
+        <header>
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse font-header">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" id="green-terminal" href=https://liuhack.github.io>LiUhack@LiUhack.se ~ $</a>
+		</div>
+
+		
+		<div class="collapse navbar-collapse" id="navbar-collapse-1">
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<a href="https://liuhack.github.io">/home/LiUhack</a>
+				</li>
+				
+				
+				<li class="dropdown">
+                    
+            		<a href="https://liuhack.github.io/writeups">~/writeups</a>
+            		
+        		</li>
+        		
+
+			</ul>
+		</div>
+	</div>
+</nav>
+</header>
+
+        <div class="container wrapper">
+            <h1><a href="https://liuhack.github.io/writeups/2018/midnightsun-quals/hm4c/readme/"></a></h1>
+            <span class="post-date">Jan 1, 0001 </span>
+            <div class="post-content">
+                
+
+<h1 id="hm4c-crypto">Hm4c - crypto</h1>
+
+<blockquote>
+<p>Some n00b implemented a HMAC, I&rsquo;m sure you can pwn it.</p>
+</blockquote>
+
+<p>NOTE: mirror of the blog post at <a href="https://toblu302.github.io/writeup/2018/04/15/midnight-sun-ctf-hm4c-writeup.html">https://toblu302.github.io/writeup/2018/04/15/midnight-sun-ctf-hm4c-writeup.html</a></p>
+
+<p>The following post is a writeup for the <a href="https://midnightsunctf.se/">Midnight Sun CTF</a> online qualifiers. The challenge was to find an encryption key which was used to encrypt some data on a server. You were given some source code of a program, as well as an IP to a server which is running the program.</p>
+
+<p>Connecting to the server gave the following promt:</p>
+
+<pre><code>hm4c v1.0 server starting...
+Options:
+1. Request hmac
+2. Quit
+</code></pre>
+
+<p>Pressing 1 and entering some random string gave the following response:</p>
+
+<pre><code>Enter data:
+asdfoij234098jdofijgdfg
+Not valid Base64.
+</code></pre>
+
+<p>So we know that the server software expects something which can be decoded as Base64.</p>
+
+<p>Fortunately, the Python source code running the server was given as a part of the challenge. Here it is, with some of the comments removed for clarity:</p>
+
+<pre><code class="language-python">import sys
+import base64
+from hashlib import sha256
+from flag import FLAG
+
+def to_int(x):
+    return int(x.encode(&quot;hex&quot;), 16)
+
+def h(x):
+    return to_int(
+        sha256(str(x)).digest()
+    )
+
+def hmac(x):
+    val = to_int(x)
+    key = to_int(FLAG)
+    tmp = key ^ val
+    return h(tmp + val)
+
+def _write(msg):
+    sys.stdout.write(str(msg) + &quot;\n&quot;)
+    sys.stdout.flush()
+
+def _read():
+    data = sys.stdin.readline().strip()
+    return data
+
+_write(&quot;hm4c v1.0 server starting...&quot;)
+
+while True:
+    _write(&quot;Options:&quot;)
+    _write(&quot;1. Request hmac&quot;)
+    _write(&quot;2. Quit&quot;)
+
+    try:
+        choice = int(_read())
+    except:
+        break
+
+    if choice == 1:
+        _write(&quot;Enter data:&quot;)
+        try:
+            data = base64.b64decode(_read())
+            _write(hmac(data))
+        except Exception as e:
+            _write(&quot;Not valid Base64.&quot;)
+    elif choice == 2:
+        _write(&quot;KBye.&quot;)
+        break
+    else:
+        _write(&quot;Invalid choice.&quot;)
+        break
+
+_write(&quot;Quitting...&quot;)
+sys.exit()
+</code></pre>
+
+<p>Like we found out earlier, the server tries to parse the input as base64. It then passes the base64-decoded data to the function which calculates the HMAC.</p>
+
+<pre><code class="language-python">data = base64.b64decode(_read())
+_write(hmac(data))
+</code></pre>
+
+<p>Let&rsquo;s take a close look at the hmac function.</p>
+
+<pre><code class="language-python">def hmac(x):
+    val = to_int(x)
+    key = to_int(FLAG)
+    tmp = key ^ val
+    return h(tmp + val)
+</code></pre>
+
+<p>It parses the base64-decoded input as an integer, and then XORs it with the flag (also parsed as an integer). It then adds the XOR-result to the input and passes it to the function h(x). Taking a close look at the h(x) function, we can see that it essentially takes the SHA256 of the value and parses it as an integer.</p>
+
+<pre><code class="language-python">def h(x):
+    return to_int(
+        sha256(str(x)).digest()
+    )
+</code></pre>
+
+<p>This means that hmac(x) essentially returns SHA256( (key XOR input) + input ), which is what gets printed. Let&rsquo;s use our knowledge of XOR to see if we can find out a way to break this function!</p>
+
+<p>If you take something XOR 0, it&rsquo;s going to return itself (x XOR 0 = x). So if we can get input=0, hmac(input) is going to return SHA256( (key XOR 0) + 0) = SHA256(key). So we need something which gets gets decoded to &lsquo;0&rsquo; in base64. Running &lsquo;<em>printf &ldquo;\0&rdquo; &#124; base64</em>&rsquo; informs us that &lsquo;AA==&rsquo; is the string we&rsquo;re after. Sending AA== to the server gives us the following response:</p>
+
+<pre><code>26338283963642392056362977586359152896355053870382809550343568157752924630409
+</code></pre>
+
+<p>So we know that SHA256(key) = 26338283963642392056362977586359152896355053870382809550343568157752924630409. Maybe we can use this information to bruteforce the key? Unfortunately, SHA256 takes quite some time to bruteforce. Even though we know some structure of the key, it is still going to take too long. But it is possible to send some clever data the server to retrieve the key. Let&rsquo;s look at <em>(key XOR input) + input</em> again. Suppose that exactly one bit of the input is set. Then when the key gets XORed with the input, that specific bit is going to flip. The following table describes it:</p>
+
+<p>val | 000010000
+key | 100101001
+key XOR val | 1001<strong>1</strong>1001</p>
+
+<p>After the XOR, the bit gets added in again:</p>
+
+<p>key XOR val | 1001<strong>1</strong>1001
+val | 000010000
+sum | 101001001</p>
+
+<p>As you can see, sending an input which flipped the fifth bit changed the sum quite a bit, so we no longer compute SHA256( key ). But if we redo the example above, but with the fourth bit set instead of the fifth, we get the following:</p>
+
+<p>val | 000001000
+key | 100101001
+key XOR val | 10010<strong>1</strong>001</p>
+
+<p>And the addition:</p>
+
+<p>key XOR val | 10010<strong>1</strong>001
+val | 000001000
+sum | 100101001</p>
+
+<p>The sum ended up being the key again! This is because the XOR flips the set bit of the key to &ldquo;off&rdquo;, and the addition then adds the bit back in again! We can use this to get the key from the server, one bit at a time. If we send in 1 and get back the same number as we did for 0, we know that the first bit of the key is set. If we get back a different number, we know that the first bit of the key is not set. You can then proceed to send in 2 (binary 10), 4 (binary 100), 8 (binary 1000) and so on.</p>
+
+<p>When I found this out, I generated 256 different Base64-encoded strings of integers with exactly one digit set. Then I made a python-script which reads the strings, sends them to the server, and prints out a 1 or a 0, depending on if the previous number was returned.</p>
+
+<pre><code class="language-python">import os
+import socket
+import sys
+import time
+
+def netcat(host, port, content):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, int(port)))
+    s.sendall(content.encode())
+    s.shutdown(socket.SHUT_WR)
+    retval = []
+    while True:
+        data = s.recv(4096)
+        if not data:
+            break
+        retval.append( repr(data) )
+    s.close()
+    return retval
+
+for line in sys.stdin:
+  data = line.strip()
+  resp = netcat( [SERVER IP], 31337, &quot;1\n&quot; + data + &quot; \n2&quot; )
+  time.sleep(0.1)
+  if( &quot;26338283963642392056362977586359152896355053870382809550343568157752924630409&quot; in resp[1] ):
+    print( &quot;1&quot; )
+  else:
+    print( &quot;0&quot; )
+</code></pre>
+
+<p>The netcat function was take from <a href="https://stackoverflow.com/questions/1908878/netcat-implementation-in-python">Stack Overflow</a> and modified slightly to do what I want. I ran the script with &lsquo;_python &lt; base64<em>strings.txt</em>&rsquo;.</p>
+
+<p>After some time, the script printed out the following sequence:</p>
+
+<p>1011111011000010001011001011001000010010111110100010001000001100111101101110001011111010100000101111101000101110000011000111001011111010110010101000110011111010001001001000110000010110001010101101111000101110000101101110011010010110011101100010011010010110</p>
+
+<p>Reversing the digits and putting it trough some online <a href="https://codebeautify.org/binary-string-converter">binary to string converter</a> revealed the flag:</p>
+
+<pre><code>midnight{Th1$_1S_N0t_A_Go0D_HM4C}
+</code></pre>
+
+<p>Or well, most of it. The part inside {} is all that&rsquo;s needed, so only getting 256 bits was quite enough.</p>
+
+<p>Lessons learned from this challenge: Even if you use something hard-to-crack like SHA256, you can still end up with something broken if you do some mathematically unsound pre-calculation!</p>
+
+            </div>
+            
+            <div class="post-comments">
+                
+            </div>
+            
+            <div class="push"></div>
+        </div>
+        <footer class="footer text-center">
+<p>Copyright &copy; 2019 LiUhack
+</p>
+</footer>
+
+    </body>

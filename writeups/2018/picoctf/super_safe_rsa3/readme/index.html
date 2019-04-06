@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>  &middot; LiUhack - CTF team at LiU </title>
+
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="generator" content="Hugo 0.51" />
+
+
+<script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="https://liuhack.github.io/css/nix.css">
+
+
+<link href="https://fonts.googleapis.com/css?family=Inconsolata%7COpen+Sans%7CConcert+One" rel="stylesheet">
+
+
+
+
+    </head>
+
+    <body>
+	
+        <header>
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse font-header">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" id="green-terminal" href=https://liuhack.github.io>LiUhack@LiUhack.se ~ $</a>
+		</div>
+
+		
+		<div class="collapse navbar-collapse" id="navbar-collapse-1">
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<a href="https://liuhack.github.io">/home/LiUhack</a>
+				</li>
+				
+				
+				<li class="dropdown">
+                    
+            		<a href="https://liuhack.github.io/writeups">~/writeups</a>
+            		
+        		</li>
+        		
+
+			</ul>
+		</div>
+	</div>
+</nav>
+</header>
+
+        <div class="container wrapper">
+            <h1><a href="https://liuhack.github.io/writeups/2018/picoctf/super_safe_rsa3/readme/"></a></h1>
+            <span class="post-date">Jan 1, 0001 </span>
+            <div class="post-content">
+                
+
+<h1 id="super-safe-rsa-3-crypto">Super Safe RSA 3 - Crypto</h1>
+
+<p>On this RSA challenge, we get the following:</p>
+
+<pre><code>c: 2214959746368961374343866619773680463913808855252144119575578619282028038148568609891198127966225495311682540323131579203618894145626046974546075970616339033486317429461235324910794466410074881752239541146624247745072518241741204968025293372054661473208051944193745386532992238774551013797836031291096741
+n: 5564465787507426784189854287795264081761345977763964262369153883931335062166838686916377911069328789715623668583315372050520387414170383621534793892389463905512682152442890656361180400315699526374103389751180954335677791471685242043876553878553597343813515063304714971565013966010693181624796612216036537
+e: 65537
+</code></pre>
+
+<p>Here we have a larger n so multiple primes RSA is the way here. We can get all factors on <a href="https://www.alpertron.com.ar/ECM.HTM">Alpertron</a></p>
+
+<p>Then we google multiple primes RSA and create this script</p>
+
+<pre><code class="language-python">c = 2214959746368961374343866619773680463913808855252144119575578619282028038148568609891198127966225495311682540323131579203618894145626046974546075970616339033486317429461235324910794466410074881752239541146624247745072518241741204968025293372054661473208051944193745386532992238774551013797836031291096741
+
+n = 5564465787507426784189854287795264081761345977763964262369153883931335062166838686916377911069328789715623668583315372050520387414170383621534793892389463905512682152442890656361180400315699526374103389751180954335677791471685242043876553878553597343813515063304714971565013966010693181624796612216036537
+
+e = 65537
+
+p1 = 2175350609
+p2 = 2182560491
+p3 = 2196605027
+p4 = 2209029391
+p5 = 2466547367
+p6 = 2510616961
+p7 = 2588079563
+p8 = 2704140821
+p9 = 2736762829
+p10 = 2796597043
+p11 = 2809479437
+p12 = 2829659713
+p13 = 2837556643
+p14 = 2858051057
+p15 = 3032087491
+p16 = 3042267581
+p17 = 3063304267
+p18 = 3102491383
+p19 = 3219243151
+p20 = 3284737447
+p21 = 3392021827
+p22 = 3789952469
+p23 = 3812358577
+p24 = 3858988619
+p25 = 3864352469
+p26 = 3877179469
+p27 = 3910354507
+p28 = 3985847791
+p29 = 3990903569
+p30 = 4041031661
+p31 = 4069378073
+p32 = 4203209281
+
+primes = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, \
+          p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, \
+          p26, p27, p28, p29, p30, p31, p32]
+
+def egcd(a, b):
+    if a == 0:
+        return (b, 0, 1)
+    else:
+        g, y, x = egcd(b % a, a)
+        return (g, x - (b // a) * y, y)
+
+def modinv(a, m):
+    g, x, y = egcd(a, m)
+    if g != 1:
+        raise Exception('modular inverse does not exist')
+    else:
+        return x % m
+
+
+# From https://crypto.stackexchange.com/questions/31109/rsa-enc-decryption-with-multiple-prime-modulus-using-crt
+ts = []
+xs = []
+ds = []
+
+for i in range(len(primes)):
+	ds.append(modinv(e, primes[i]-1))
+
+m = primes[0]
+
+for i in range(1, len(primes)):
+	ts.append(modinv(m, primes[i]))
+	m = m * primes[i]
+
+for i in range(len(primes)):
+	xs.append(pow((c%primes[i]), ds[i], primes[i]))
+
+x = xs[0]
+m = primes[0]
+
+for i in range(1, len(primes)):
+	x = x + m * ((xs[i] - x % primes[i]) * (ts[i-1] % primes[i]))
+	m = m * primes[i]
+
+
+print hex(x%n)[2:-1].decode(&quot;hex&quot;)
+</code></pre>
+
+<p>This script prints the flag: picoCTF{p_&amp;_q_n0<em>r</em>$_t!!_6725536}</p>
+
+            </div>
+            
+            <div class="post-comments">
+                
+            </div>
+            
+            <div class="push"></div>
+        </div>
+        <footer class="footer text-center">
+<p>Copyright &copy; 2019 LiUhack
+</p>
+</footer>
+
+    </body>

@@ -3,6 +3,146 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://liuhack.github.io/writeups/2018/csaw/flatcrypt/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/csaw/ldab/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/csaw/rewind/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/csaw/sso/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/csaw/short_circuit/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/csaw/simple_recovery/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/csaw/whyos/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/icectf/anticaptcha/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/icectf/drumbone/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/icectf/garfeld/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/icectf/hardshells/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/icectf/rabbithole/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/icectf/toke-relaunch/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/sec-t/pingpong/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/sec-t/shredder/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/midnightsun-quals/babyshells/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/midnightsun-quals/diary/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/midnightsun-quals/hm4c/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/midnightsun-quals/jeil/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/a_simple_question/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/authenticate/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/fancy-alive-monitoring/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/flaskcards/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/flaskcards_skeleton_key/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/flaskcards_and_freedom/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/help_me_reset2/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/secure_logon/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/super_safe_rsa/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/super_safe_rsa2/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/super_safe_rsa3/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/picoctf/in_out_error/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/securityfest/everywhere/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/securityfest/excesss/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/2018/securityfest/mr.reagan/readme/</loc>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/readme/</loc>
+  </url>
+  
+  <url>
     <loc>https://liuhack.github.io/categories/</loc>
     <priority>0</priority>
   </url>
@@ -14,6 +154,11 @@
   
   <url>
     <loc>https://liuhack.github.io/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://liuhack.github.io/writeups/</loc>
     <priority>0</priority>
   </url>
   

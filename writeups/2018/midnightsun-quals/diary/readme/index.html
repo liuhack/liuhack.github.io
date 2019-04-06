@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>  &middot; LiUhack - CTF team at LiU </title>
+
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="generator" content="Hugo 0.51" />
+
+
+<script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="https://liuhack.github.io/css/nix.css">
+
+
+<link href="https://fonts.googleapis.com/css?family=Inconsolata%7COpen+Sans%7CConcert+One" rel="stylesheet">
+
+
+
+
+    </head>
+
+    <body>
+	
+        <header>
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse font-header">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" id="green-terminal" href=https://liuhack.github.io>LiUhack@LiUhack.se ~ $</a>
+		</div>
+
+		
+		<div class="collapse navbar-collapse" id="navbar-collapse-1">
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<a href="https://liuhack.github.io">/home/LiUhack</a>
+				</li>
+				
+				
+				<li class="dropdown">
+                    
+            		<a href="https://liuhack.github.io/writeups">~/writeups</a>
+            		
+        		</li>
+        		
+
+			</ul>
+		</div>
+	</div>
+</nav>
+</header>
+
+        <div class="container wrapper">
+            <h1><a href="https://liuhack.github.io/writeups/2018/midnightsun-quals/diary/readme/"></a></h1>
+            <span class="post-date">Jan 1, 0001 </span>
+            <div class="post-content">
+                
+
+<h1 id="diary-misc">Diary - Misc</h1>
+
+<blockquote>
+<p>We found a torn diary on the ground. It seems to belong to a local boy.</p>
+</blockquote>
+
+<p>In this challenge, we got a git repository. The first thing we can do is trying <code>git log</code> and we got the following</p>
+
+<pre><code>commit 2fec4e955704bd60292a9f9169f05c3334e555f4 (HEAD -&gt; master)
+Author: Calle Svensson &lt;calle.svensson@zeta-two.com&gt;
+Date:   Sat Apr 14 02:22:52 2018 +0200
+
+    Added pencil to wishlist
+
+commit b182065ebc321a5432ab89be1ef2240077b3fbec
+Author: Calle Svensson &lt;calle.svensson@zeta-two.com&gt;
+Date:   Sat Apr 14 02:20:25 2018 +0200
+
+    April 14th
+error: Could not read afe5a9b6a373add54d07d874fb08edeec4a740da
+fatal: Failed to traverse parents of commit e7354a8187cd28c075e602f40380968d2865dcac
+</code></pre>
+
+<p>This reveals that the git repository is corrupted. We can try to use the Extractor tool from the following great repository: <a href="https://github.com/internetwache/GitTools">https://github.com/internetwache/GitTools</a></p>
+
+<p>After running the extractor bash script on the git repository, we look around in the files we got and the file <code>1-4e9a1fe2aeb76cd0ab2c3d232691b714146b0475</code> contains this content which reveals the flag:</p>
+
+<pre><code>Hello!
+
+This is my diary. There are many like it but this one is mine.
+
+April 9th
+Today was a good day. I ate some pie.
+
+April 10th
+I was a little bit sad today.
+
+April 11th
+Today I found a flag, it said: midnight{if_an_object_ref_falls_and_no_one_hears} that sounds very interesting.
+</code></pre>
+
+            </div>
+            
+            <div class="post-comments">
+                
+            </div>
+            
+            <div class="push"></div>
+        </div>
+        <footer class="footer text-center">
+<p>Copyright &copy; 2019 LiUhack
+</p>
+</footer>
+
+    </body>
